@@ -77,4 +77,20 @@ M.toggle_terminal = function(term_name)
     toggle_terminal(term_name)
 end
 
+M.setup = function()
+    vim.api.nvim_create_autocmd({ "FocusLost", "FocusGained", "VimResized" }, {
+        group = vim.api.nvim_create_augroup("nterm-resize", { clear = true }),
+        callback = function()
+            local current_win = vim.api.nvim_get_current_win()
+            local buf_in_win = vim.api.nvim_win_get_buf(current_win)
+
+            for _, value in pairs(M.terminals) do
+                if buf_in_win == value then
+                    H.set_window_float_size(current_win)
+                end
+            end
+        end,
+    })
+end
+
 return M
